@@ -29,7 +29,6 @@ export type CdFormValues = {
 export default function CdDrawer({
   isDrawerOpen,
   setIsDrawerOpen,
-  FilterContent,
   onRefresh,
   mode = "add",
   editId,
@@ -37,7 +36,6 @@ export default function CdDrawer({
 }: {
   isDrawerOpen: boolean;
   setIsDrawerOpen: (isDrawerOpen: boolean) => void;
-  FilterContent: React.ReactNode;
   onRefresh?: () => void;
   mode?: "add" | "edit";
   editId?: string;
@@ -54,11 +52,11 @@ export default function CdDrawer({
   } = useForm<CdFormValues>({
     defaultValues: {
       name: initialValues?.name ?? "",
-      category: (initialValues?.category as any) ?? "PS5",
+      category: (initialValues?.category as "PS4" | "PS5" | "XBOX" | "PC") ?? "PS5",
       pricePerDay: initialValues?.pricePerDay ?? 0,
       quantity: initialValues?.quantity ?? 1,
       availableQuantity: initialValues?.availableQuantity ?? 1,
-      status: (initialValues?.status as any) ?? "available",
+      status: (initialValues?.status as "available" | "rented" | "unavailable") ?? "available",
       description: initialValues?.description ?? "",
       image: null,
     },
@@ -69,11 +67,11 @@ export default function CdDrawer({
     if (mode === "edit" && initialValues) {
       reset({
         name: initialValues.name ?? "",
-        category: (initialValues.category as any) ?? "PS5",
+        category: (initialValues.category as "PS4" | "PS5" | "XBOX" | "PC") ?? "PS5",
         pricePerDay: initialValues.pricePerDay ?? 0,
         quantity: initialValues.quantity ?? 1,
         availableQuantity: initialValues.availableQuantity ?? 1,
-        status: (initialValues.status as any) ?? "available",
+        status: (initialValues.status as "available" | "rented" | "unavailable") ?? "available",
         description: initialValues.description ?? "",
         image: null,
       });

@@ -31,6 +31,14 @@ interface AvailableCD {
   name: string;
 }
 
+// Type for CD data from API
+interface ApiCD {
+  _id: string;
+  name: string;
+  availableQuantity?: number;
+  quantity: number;
+}
+
 export function RentalRightSection() {
   const [rentals, setRentals] = useState<RentalTableData[]>([]);
   const [availableCds, setAvailableCds] = useState<AvailableCD[]>([]);
@@ -74,10 +82,10 @@ export function RentalRightSection() {
         "Content-Type": "application/json",
       },
     });
-    const cdsData = await cdsResult.json();
+    const cdsData: ApiCD[] = await cdsResult.json();
     const availableCdsData: AvailableCD[] = cdsData
-      .filter((cd: any) => (cd.availableQuantity !== undefined ? cd.availableQuantity : cd.quantity) > 0)
-      .map((cd: any) => ({
+      .filter((cd: ApiCD) => (cd.availableQuantity !== undefined ? cd.availableQuantity : cd.quantity) > 0)
+      .map((cd: ApiCD) => ({
         id: String(cd._id),
         name: cd.name,
       }));
@@ -98,10 +106,10 @@ export function RentalRightSection() {
             "Content-Type": "application/json",
           },
         });
-        const cdsData = await cdsResult.json();
+        const cdsData: ApiCD[] = await cdsResult.json();
         const availableCdsData: AvailableCD[] = cdsData
-          .filter((cd: any) => (cd.availableQuantity !== undefined ? cd.availableQuantity : cd.quantity) > 0)
-          .map((cd: any) => ({
+          .filter((cd: ApiCD) => (cd.availableQuantity !== undefined ? cd.availableQuantity : cd.quantity) > 0)
+          .map((cd: ApiCD) => ({
             id: String(cd._id),
             name: cd.name,
           }));
@@ -173,7 +181,6 @@ export function RentalRightSection() {
       <RentalDrawer
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
-        FilterContent={<FilterContent />}
         onRefresh={refreshData}
         mode={drawerMode}
         editId={editItem?.id as string | undefined}
@@ -185,7 +192,7 @@ export function RentalRightSection() {
                 renterName: editItem.renterName,
                 phoneNumber: editItem.phoneNumber,
                 endDate: editItem.endDate,
-                status: editItem.status as any,
+                status: editItem.status as "active" | "returned" | "overdue",
               }
             : undefined
         }

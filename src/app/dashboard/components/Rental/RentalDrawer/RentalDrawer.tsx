@@ -25,7 +25,6 @@ export type RentalFormValues = {
 export default function RentalDrawer({
   isDrawerOpen,
   setIsDrawerOpen,
-  FilterContent,
   onRefresh,
   mode = "add",
   editId,
@@ -34,7 +33,6 @@ export default function RentalDrawer({
 }: {
   isDrawerOpen: boolean;
   setIsDrawerOpen: (isDrawerOpen: boolean) => void;
-  FilterContent: React.ReactNode;
   onRefresh?: () => void;
   mode?: "add" | "edit";
   editId?: string;

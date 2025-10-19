@@ -122,17 +122,16 @@ export function CdRightSection() {
         <CdDrawer
           isDrawerOpen={isDrawerOpen}
           setIsDrawerOpen={setIsDrawerOpen}
-          FilterContent={<FilterContent />}
           onRefresh={refreshData}
           mode={drawerMode}
           editId={editItem?.id as string | undefined}
         initialValues={editItem ? {
           name: editItem.name,
-          category: editItem.category as any,
+          category: editItem.category as "PS4" | "PS5" | "XBOX" | "PC",
           pricePerDay: editItem.pricePerDay,
           quantity: editItem.quantity,
           availableQuantity: editItem.availableQuantity,
-          status: editItem.status as any,
+          status: editItem.status as "available" | "rented" | "unavailable",
           description: editItem.description,
           imageUrl: editItem.image,
         } : undefined}
