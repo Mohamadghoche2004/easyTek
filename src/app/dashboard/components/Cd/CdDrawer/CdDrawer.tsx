@@ -12,6 +12,7 @@ import {
 import { X } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import React from "react";
+import Image from "next/image";
 import { StyledUploadZone } from "@/components/StyledUploadZone/StyledUploadZone";
 import { uploadToSupabase } from "../../../../../../lib/uploadToSupabase";
 
@@ -114,7 +115,16 @@ export default function CdDrawer({
         imageUrl = await uploadToSupabase(file, { folder: "cds" });
       }
 
-      const body: any = {
+      const body: {
+        name: string;
+        category: string;
+        pricePerDay: number;
+        quantity: number;
+        availableQuantity: number;
+        status: string;
+        description: string;
+        image: string;
+      } = {
         name: values.name,
         category: values.category,
         pricePerDay: Number(values.pricePerDay),
@@ -250,9 +260,11 @@ export default function CdDrawer({
 
           {currentImageUrl && !selectedFile && (
             <div style={{ marginTop: 8 }}>
-              <img
+              <Image
                 src={currentImageUrl}
                 alt="Current"
+                width={300}
+                height={200}
                 style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 8 }}
               />
               <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>

@@ -55,9 +55,8 @@ export const rentalConfig: TableConfig<RentalTableData> = {
         const status = String(value);
         const color = status === "active" ? "#4caf50" : status === "returned" ? "#2196f3" : "#f44336";
         return React.createElement("span", {
-          style: { color, fontWeight: "bold" },
-          children: status.toUpperCase()
-        });
+          style: { color, fontWeight: "bold" }
+        }, status.toUpperCase());
       },
     },
   ],

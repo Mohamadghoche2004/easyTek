@@ -51,7 +51,7 @@ export default function RentalDrawer({
       renterName: initialValues?.renterName ?? "",
       phoneNumber: initialValues?.phoneNumber ?? "",
       endDate: initialValues?.endDate ?? "",
-      status: (initialValues?.status as any) ?? "active",
+      status: (initialValues?.status as "active" | "returned" | "overdue") ?? "active",
     },
   });
 
@@ -64,7 +64,7 @@ export default function RentalDrawer({
         renterName: initialValues.renterName ?? "",
         phoneNumber: initialValues.phoneNumber ?? "",
         endDate: initialValues.endDate ?? "",
-        status: (initialValues.status as any) ?? "active",
+        status: (initialValues.status as "active" | "returned" | "overdue") ?? "active",
       });
     }
     if (mode === "add") {
@@ -80,7 +80,13 @@ export default function RentalDrawer({
 
   const onSubmit = async (values: RentalFormValues) => {
     try {
-      const body: any = {
+      const body: {
+        cd: string;
+        renterName: string;
+        phoneNumber: string;
+        endDate: string;
+        status: string;
+      } = {
         cd: values.cdId,
         renterName: values.renterName,
         phoneNumber: values.phoneNumber,
