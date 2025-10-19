@@ -1,7 +1,8 @@
-// src/app/api/login/route.js
 import bcrypt from "bcryptjs";
 import User from "../../../../models/User";
 import dbConnect from "../../../../lib/dbConnect";
+import { generateToken } from "../../../../lib/auth";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -10,18 +11,35 @@ export async function POST(req: Request) {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 });
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    // Optional: you can create JWT here
-    return new Response(JSON.stringify({ message: "Login successful" }), { status: 200 });
+    // Generate JWT token
+    const token = generateToken({ id: user._id.toString(), email: user.email });
+
+    // Create response with token in cookie
+    const response = NextResponse.json({ 
+      message: "Login successful", 
+      user: { id: user._id, email: user.email } 
+    }, { status: 200 });
+
+    // Set HTTP-only cookie
+    response.cookies.set('auth-token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/'
+    });
+
+    return response;
   } catch (error) {
     console.error(error);
-    return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

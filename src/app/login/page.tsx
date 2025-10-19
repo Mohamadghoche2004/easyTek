@@ -2,35 +2,41 @@
 import { Button, TextField } from "@mui/material";
 import "./login.css";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "next/navigation";
-export default function Login() {
 
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const [error, setError] = useState("");
-const [loading, setLoading] = useState(false);
-const router = useRouter();
-const handleLogin = async () => {
-  if (email === "" || password === "") {
-    setError("Please fill in all fields");
-    return;
-  }
-  setLoading(true);
-  const response = await fetch("/api/login", {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-  });
-  const data = await response.json();
-  if (response.ok) {
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login, user } = useAuth();
+  const router = useRouter();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+
+  const handleLogin = async () => {
+    if (email === "" || password === "") {
+      setError("Please fill in all fields");
+      return;
+    }
+    setLoading(true);
     setError("");
+    
+    const success = await login(email, password);
+    if (success) {
+      router.push("/dashboard");
+    } else {
+      setError("Invalid credentials");
+    }
     setLoading(false);
-    router.push("/dashboard");
-  } else {
-    setError(data.error);
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen ">
@@ -43,7 +49,9 @@ const handleLogin = async () => {
       {error && <p className="text-red-500">{error}</p>}
       <TextField size="small" label="Username" value={email} onChange={(e) => setEmail(e.target.value)} />
       <TextField size="small" label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <Button  className="login-button" onClick={handleLogin}>Login</Button>
+      <Button  className="login-button" onClick={handleLogin} disabled={loading}>
+        {loading ? "Logging in..." : "Login"}
+      </Button>
     </div>
     </div>
   );
