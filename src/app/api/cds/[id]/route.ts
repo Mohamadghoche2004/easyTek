@@ -5,11 +5,11 @@ import Cd from '../../../../../models/Cd';
 // PATCH - Update an existing CD
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
-    const id = params.id;
+    const { id } = await params;
     const body = await request.json();
 
     // Prevent changing immutable fields inadvertently
