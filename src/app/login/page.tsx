@@ -39,7 +39,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen ">
+    <div className="flex flex-col items-center justify-center min-h-[90vh] ">
     <div className="flex flex-col items-center  login-card gap-4">
         <div className="bg-black rounded-lg p-2">
 

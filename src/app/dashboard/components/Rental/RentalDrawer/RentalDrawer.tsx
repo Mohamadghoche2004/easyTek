@@ -125,6 +125,9 @@ export default function RentalDrawer({
         sx: {
           width: "300px",
           minWidth: "300px",
+          display: "flex",
+          flexDirection: "column",
+          height: "100vh",
         },
       }}
     >
@@ -134,7 +137,7 @@ export default function RentalDrawer({
         </h1>
         <X onClick={() => setIsDrawerOpen(false)} size={20} />
       </StyledDrawerHead>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <StyledDrawerContent>
           <Stack spacing={2}>
             <Controller
@@ -240,15 +243,16 @@ export const StyledDrawerHead = styled.div`
 
 export const StyledDrawerContent = styled.div`
   padding: 16px;
+  flex: 1;
+  overflow-y: auto;
 `;
 
 export const StyledDrawerFooter = styled.div`
-  position: sticky;
-  bottom: 0;
   display: flex;
   justify-content: flex-end;
   gap: 8px;
   padding: 12px 16px;
   background: #fff;
   border-top: 1px solid #e0e0e0;
+  margin-top: auto;
 `;
