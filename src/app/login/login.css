@@ -1,0 +1,27 @@
+.login-card{
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-button{
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    padding: 4px 16px !important;
+    text-transform: none !important;
+    
+}
+.login-button:hover{
+    background-color: #ece31f !important;
+    color: #000000 !important;
+}
+.login-button:active{
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
