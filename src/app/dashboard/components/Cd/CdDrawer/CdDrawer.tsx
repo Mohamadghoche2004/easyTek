@@ -168,7 +168,7 @@ export default function CdDrawer({
         <h1 className="font-semibold text-lg">{mode === "edit" ? "Edit CD" : "Add CD"}</h1>
         <X onClick={() => setIsDrawerOpen(false)} size={20} />
       </StyledDrawerHead>
-      <form onSubmit={handleSubmit(onSubmit as any)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <StyledDrawerContent>
           <Stack spacing={2}>
             <TextField
