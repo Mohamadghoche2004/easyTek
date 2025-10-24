@@ -97,7 +97,7 @@ export function CdRightSection() {
     />
   );
   return (
-    <div className="col-span-12 lg:col-span-10 px-10 lg:p-10">
+    <div className="col-span-12 lg:col-span-10 px-4 md:px-10 lg:p-10">
       <GenericTable
         data={filteredCds}
         config={{
