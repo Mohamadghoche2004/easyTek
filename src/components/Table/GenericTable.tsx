@@ -61,6 +61,15 @@ export default function GenericTable<T extends BaseTableData>({
     event: React.MouseEvent<unknown>,
     id: string | number
   ) => {
+    // Check if item is deletable before allowing selection
+    const item = data.find(d => d.id === id);
+    const isDeletable = item && (item as any).isDeletable !== false;
+    
+    // If trying to select a non-deletable item, don't allow it
+    if (!isDeletable && !selected.includes(id)) {
+      return;
+    }
+    
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly (string | number)[] = [];
 
@@ -101,8 +110,16 @@ export default function GenericTable<T extends BaseTableData>({
 
   const handleDelete = () => {
     if (config.onDelete) {
-      config.onDelete(selected);
-      setSelected([]);
+      // Filter out non-deletable items from selected list
+      const deletableSelected = selected.filter(id => {
+        const item = data.find(d => d.id === id);
+        return item && (item as any).isDeletable !== false;
+      });
+      
+      if (deletableSelected.length > 0) {
+        config.onDelete(deletableSelected);
+        setSelected([]);
+      }
     }
   };
 
@@ -128,11 +145,19 @@ export default function GenericTable<T extends BaseTableData>({
     [order, orderBy, page, rowsPerPage, filteredItems]
   );
 
+  // Calculate number of deletable selected items
+  const deletableSelectedCount = React.useMemo(() => {
+    return selected.filter(id => {
+      const item = data.find(d => d.id === id);
+      return item && (item as any).isDeletable !== false;
+    }).length;
+  }, [selected, data]);
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <GenericTableToolbar
-          numSelected={selected.length}
+          numSelected={deletableSelectedCount}
           searchTerm={searchTerm}
           onSearchChange={handleSearchChange}
           title={config.title}
@@ -177,6 +202,7 @@ export default function GenericTable<T extends BaseTableData>({
                       <Checkbox
                         color="primary"
                         checked={isItemSelected}
+                        disabled={(row as any).isDeletable === false}
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}

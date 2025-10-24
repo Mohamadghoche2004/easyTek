@@ -18,6 +18,7 @@ interface MongoCD {
   pricePerDay: number;
   image: string;
   description?: string;
+  isDeletable?: boolean;
   __v: number;
   createdAt: string;
   updatedAt: string;
@@ -28,7 +29,7 @@ export function CdRightSection() {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [availableOnly, setAvailableOnly] = useState<boolean>(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const [drawerMode, setDrawerMode] = useState<'add' | 'edit'>('add');
+  const [drawerMode, setDrawerMode] = useState<"add" | "edit">("add");
   const [editItem, setEditItem] = useState<CDTableData | null>(null);
   const fetchData = async () => {
     const result = await fetch("/api/cds", {
@@ -44,11 +45,13 @@ export function CdRightSection() {
       name: cd.name,
       category: cd.category,
       quantity: cd.quantity,
-      availableQuantity: cd.availableQuantity !== undefined ? cd.availableQuantity : cd.quantity, // fallback for existing data
+      availableQuantity:
+        cd.availableQuantity !== undefined ? cd.availableQuantity : cd.quantity, // fallback for existing data
       status: cd.status,
       pricePerDay: cd.pricePerDay,
       image: cd.image,
       description: cd.description || "",
+      isDeletable: cd.isDeletable !== undefined ? cd.isDeletable : true, // fallback for existing data
     }));
     setCds(transformedData);
   };
@@ -102,40 +105,56 @@ export function CdRightSection() {
           ...cdConfig,
           showFilter: true,
           filterComponent: <FilterContent />,
-          onAdd: () => { setDrawerMode('add'); setEditItem(null); setIsDrawerOpen(true); },
+          onAdd: () => {
+            setDrawerMode("add");
+            setEditItem(null);
+            setIsDrawerOpen(true);
+          },
           onEdit: (item) => {
             const cd = item as CDTableData;
-            setDrawerMode('edit');
+            setDrawerMode("edit");
             setEditItem(cd);
             setIsDrawerOpen(true);
           },
           onDelete: async (ids) => {
-            await fetch('/api/cds/bulk-delete', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ ids }),
-            });
-            refreshData();
+            try {
+              const response = await fetch("/api/cds/bulk-delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ids }),
+              });
+
+              const result = await response.json();
+            } catch (error) {
+              console.error("Error deleting CDs:", error);
+              alert("Failed to delete CDs. Please try again.");
+            }
           },
         }}
       />
-        <CdDrawer
-          isDrawerOpen={isDrawerOpen}
-          setIsDrawerOpen={setIsDrawerOpen}
-          onRefresh={refreshData}
-          mode={drawerMode}
-          editId={editItem?.id as string | undefined}
-        initialValues={editItem ? {
-          name: editItem.name,
-          category: editItem.category as "PS4" | "PS5" | "XBOX" | "PC",
-          pricePerDay: editItem.pricePerDay,
-          quantity: editItem.quantity,
-          availableQuantity: editItem.availableQuantity,
-          status: editItem.status as "available" | "rented" | "unavailable",
-          description: editItem.description,
-          imageUrl: editItem.image,
-        } : undefined}
-        />
+      <CdDrawer
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+        onRefresh={refreshData}
+        mode={drawerMode}
+        editId={editItem?.id as string | undefined}
+        initialValues={
+          editItem
+            ? {
+                name: editItem.name,
+                category: editItem.category as "PS4" | "PS5" | "XBOX" | "PC",
+                pricePerDay: editItem.pricePerDay,
+                quantity: editItem.quantity,
+                status: editItem.status as
+                  | "available"
+                  | "rented"
+                  | "unavailable",
+                description: editItem.description,
+                imageUrl: editItem.image,
+              }
+            : undefined
+        }
+      />
     </div>
   );
 }

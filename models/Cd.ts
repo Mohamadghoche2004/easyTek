@@ -10,6 +10,7 @@ export interface ICD extends Document {
   image?: string;
   description?: string;
   deleted?: boolean;
+  isDeletable?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,6 +34,7 @@ const cdSchema = new Schema<ICD>(
     image: { type: String, required: false, default: "" },
     description: { type: String, required: false, default: "" },
     deleted: { type: Boolean, default: false },
+    isDeletable: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

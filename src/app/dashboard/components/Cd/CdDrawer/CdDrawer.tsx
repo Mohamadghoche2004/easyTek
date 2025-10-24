@@ -21,7 +21,6 @@ export type CdFormValues = {
   category: "PS4" | "PS5" | "XBOX" | "PC";
   pricePerDay: number;
   quantity: number;
-  availableQuantity: number;
   status: "available" | "rented" | "unavailable";
   description: string;
   image?: File | null;
@@ -56,7 +55,6 @@ export default function CdDrawer({
       category: (initialValues?.category as "PS4" | "PS5" | "XBOX" | "PC") ?? "PS5",
       pricePerDay: initialValues?.pricePerDay ?? 0,
       quantity: initialValues?.quantity ?? 1,
-      availableQuantity: initialValues?.availableQuantity ?? 1,
       status: (initialValues?.status as "available" | "rented" | "unavailable") ?? "available",
       description: initialValues?.description ?? "",
       image: null,
@@ -71,7 +69,6 @@ export default function CdDrawer({
         category: (initialValues.category as "PS4" | "PS5" | "XBOX" | "PC") ?? "PS5",
         pricePerDay: initialValues.pricePerDay ?? 0,
         quantity: initialValues.quantity ?? 1,
-        availableQuantity: initialValues.availableQuantity ?? 1,
         status: (initialValues.status as "available" | "rented" | "unavailable") ?? "available",
         description: initialValues.description ?? "",
         image: null,
@@ -83,7 +80,6 @@ export default function CdDrawer({
         category: "PS5",
         pricePerDay: 0,
         quantity: 1,
-        availableQuantity: 1,
         status: "available",
         description: "",
         image: null,
@@ -120,7 +116,6 @@ export default function CdDrawer({
         category: string;
         pricePerDay: number;
         quantity: number;
-        availableQuantity: number;
         status: string;
         description: string;
         image: string;
@@ -129,7 +124,6 @@ export default function CdDrawer({
         category: values.category,
         pricePerDay: Number(values.pricePerDay),
         quantity: Number(values.quantity),
-        availableQuantity: Number(values.availableQuantity),
         status: values.status,
         description: values.description,
         image: imageUrl || currentImageUrl || "",
@@ -174,7 +168,7 @@ export default function CdDrawer({
         <h1 className="font-semibold text-lg">{mode === "edit" ? "Edit CD" : "Add CD"}</h1>
         <X onClick={() => setIsDrawerOpen(false)} size={20} />
       </StyledDrawerHead>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit as any)}>
         <StyledDrawerContent>
           <Stack spacing={2}>
             <TextField
@@ -222,15 +216,6 @@ export default function CdDrawer({
               fullWidth
               inputProps={{ min: 0 }}
               {...register("quantity", { required: true, valueAsNumber: true })}
-            />
-
-            <TextField
-              size="small"
-              type="number"
-              label="Available Quantity"
-              fullWidth
-              inputProps={{ min: 0 }}
-              {...register("availableQuantity", { required: true, valueAsNumber: true })}
             />
 
             <Controller

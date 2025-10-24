@@ -51,9 +51,19 @@ export async function POST(request: Request) {
     const newRental = new Rental(body);
     const savedRental = await newRental.save();
     
-    // Decrease available quantity (status will be auto-updated by pre-save hook)
+    // Decrease available quantity and update status
+    const newAvailableQuantity = cd.availableQuantity - 1;
+    let newStatus = "available";
+    
+    if (newAvailableQuantity === 0) {
+      newStatus = "rented";
+    } else if (cd.quantity === 0) {
+      newStatus = "unavailable";
+    }
+    
     const updatedCd = await Cd.findByIdAndUpdate(body.cd, { 
-      $inc: { availableQuantity: -1 } 
+      $inc: { availableQuantity: -1 },
+      $set: { status: newStatus }
     }, { new: true });
     
     console.log('CD after rental creation:', {

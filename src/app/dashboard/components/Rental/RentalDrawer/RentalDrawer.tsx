@@ -81,18 +81,22 @@ export default function RentalDrawer({
   const onSubmit = async (values: RentalFormValues) => {
     try {
       const body: {
-        cd: string;
+        cd?: string;
         renterName: string;
         phoneNumber: string;
         endDate: string;
         status: string;
       } = {
-        cd: values.cdId,
         renterName: values.renterName,
         phoneNumber: values.phoneNumber,
         endDate: new Date(values.endDate).toISOString(),
         status: values.status,
       };
+
+      // Only include CD field in add mode
+      if (mode === "add" && values.cdId) {
+        body.cd = values.cdId;
+      }
 
       const response = await fetch(
         mode === "edit" && editId ? `/api/rentals/${editId}` : "/api/rentals",
@@ -140,26 +144,29 @@ export default function RentalDrawer({
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <StyledDrawerContent>
           <Stack spacing={2}>
-            <Controller
-              control={control}
-              name="cdId"
-              rules={{ required: "CD is required" }}
-              render={({ field }) => (
-                <FormControl size="small" fullWidth error={!!errors.cdId}>
-                  <InputLabel>CD</InputLabel>
-                  <Select label="CD" {...field}>
-                    {availableCds.map((cd) => (
-                      <MenuItem key={cd.id} value={cd.id}>
-                        {cd.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {errors.cdId && (
-                    <FormHelperText>{errors.cdId.message}</FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            />
+            {/* Only show CD selection in add mode */}
+            {mode === "add" && (
+              <Controller
+                control={control}
+                name="cdId"
+                rules={{ required: "CD is required" }}
+                render={({ field }) => (
+                  <FormControl size="small" fullWidth error={!!errors.cdId}>
+                    <InputLabel>CD</InputLabel>
+                    <Select label="CD" {...field}>
+                      {availableCds.map((cd) => (
+                        <MenuItem key={cd.id} value={cd.id}>
+                          {cd.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.cdId && (
+                      <FormHelperText>{errors.cdId.message}</FormHelperText>
+                    )}
+                  </FormControl>
+                )}
+              />
+            )}
 
             <TextField
               label="Renter Name"

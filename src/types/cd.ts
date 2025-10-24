@@ -8,5 +8,6 @@ export interface CDTableData {
     pricePerDay: number;
     image: string;
     description: string;
+    isDeletable: boolean;
     [key: string]: string | number | boolean;
   }

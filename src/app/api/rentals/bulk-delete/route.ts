@@ -33,11 +33,32 @@ export async function POST(request: Request) {
       { strict: false }
     );
     
-    // Restore available quantity for each deleted rental
+    // Restore available quantity and update status for each deleted rental
+    // Only increase available quantity for rentals that were still active (not returned)
     for (const rental of rentalsToDelete) {
-      await Cd.findByIdAndUpdate(rental.cd, { 
-        $inc: { availableQuantity: 1 } 
-      });
+      const cd = await Cd.findById(rental.cd);
+      if (cd) {
+        // Only increase available quantity if the rental was still active (not returned)
+        if (rental.status === 'active' || rental.status === 'overdue') {
+          const newAvailableQuantity = (cd.availableQuantity || 0) + 1;
+          let newStatus = "available";
+          
+          if (newAvailableQuantity === 0) {
+            newStatus = "rented";
+          } else if (cd.quantity === 0) {
+            newStatus = "unavailable";
+          }
+          
+          await Cd.findByIdAndUpdate(rental.cd, { 
+            $inc: { availableQuantity: 1 },
+            $set: { status: newStatus }
+          });
+          
+          console.log(`Restored available quantity for CD ${cd.name} (rental was ${rental.status})`);
+        } else {
+          console.log(`Skipped restoring available quantity for CD ${cd.name} (rental was already ${rental.status})`);
+        }
+      }
     }
     
     console.log('Bulk soft delete rentals', { matched: result.matchedCount, modified: result.modifiedCount });
