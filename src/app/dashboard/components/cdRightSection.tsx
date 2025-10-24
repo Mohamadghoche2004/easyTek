@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { cdConfig } from "./TableConfig/cdConfig";
 import { CDTableData } from "@/types/cd";
 import CdFilter from "./Filters/CdFilter";
-import { Drawer } from "@mui/material";
 import CdDrawer from "./Cd/CdDrawer/CdDrawer";
 
 // Type for raw MongoDB data
@@ -124,7 +123,7 @@ export function CdRightSection() {
                 body: JSON.stringify({ ids }),
               });
 
-              const result = await response.json();
+              await response.json();
             } catch (error) {
               console.error("Error deleting CDs:", error);
               alert("Failed to delete CDs. Please try again.");

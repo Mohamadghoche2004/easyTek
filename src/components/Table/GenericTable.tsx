@@ -63,7 +63,7 @@ export default function GenericTable<T extends BaseTableData>({
   ) => {
     // Check if item is deletable before allowing selection
     const item = data.find(d => d.id === id);
-    const isDeletable = item && (item as any).isDeletable !== false;
+    const isDeletable = item && (item as { isDeletable?: boolean }).isDeletable !== false;
     
     // If trying to select a non-deletable item, don't allow it
     if (!isDeletable && !selected.includes(id)) {
@@ -113,7 +113,7 @@ export default function GenericTable<T extends BaseTableData>({
       // Filter out non-deletable items from selected list
       const deletableSelected = selected.filter(id => {
         const item = data.find(d => d.id === id);
-        return item && (item as any).isDeletable !== false;
+        return item && (item as { isDeletable?: boolean }).isDeletable !== false;
       });
       
       if (deletableSelected.length > 0) {
@@ -149,7 +149,7 @@ export default function GenericTable<T extends BaseTableData>({
   const deletableSelectedCount = React.useMemo(() => {
     return selected.filter(id => {
       const item = data.find(d => d.id === id);
-      return item && (item as any).isDeletable !== false;
+      return item && (item as { isDeletable?: boolean }).isDeletable !== false;
     }).length;
   }, [selected, data]);
 
@@ -202,7 +202,7 @@ export default function GenericTable<T extends BaseTableData>({
                       <Checkbox
                         color="primary"
                         checked={isItemSelected}
-                        disabled={(row as any).isDeletable === false}
+                        disabled={(row as { isDeletable?: boolean }).isDeletable === false}
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}

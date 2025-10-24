@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { rentalConfig } from "./TableConfig/rentalConfig";
 import { RentalTableData } from "@/types/rental";
 import RentalFilter from "./Filters/RentalFilter";
-import { Drawer } from "@mui/material";
 import RentalDrawer from "./Rental/RentalDrawer/RentalDrawer";
 
 // Type for raw MongoDB data
